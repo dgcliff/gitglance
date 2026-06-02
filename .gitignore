@@ -1,0 +1,7 @@
+# Compiled binary (built with `go build -o gitglance ./...`)
+/gitglance
+
+# Test/scratch binaries
+/gitglance-*
+*.test
+*.out
