@@ -303,7 +303,9 @@ var (
 			Border(lipgloss.RoundedBorder()).
 			BorderForeground(lipgloss.Color("#373e47")).
 			Padding(0, 1)
-	paneFocusStyle  = paneStyle.BorderForeground(lipgloss.Color("#539bf5"))
+	// Focus is conveyed by the ▸ marker and the blue title, so the border
+	// stays the same dim color in both panes — a bright border was too loud.
+	paneFocusStyle  = paneStyle
 	paneTitleStyle  = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("#768390"))
 	focusTitleStyle = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("#539bf5"))
 )
