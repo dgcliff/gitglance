@@ -128,12 +128,6 @@ func (m model) reloadAll() tea.Cmd {
 	return tea.Batch(m.loadRepo(0), m.loadRepo(1))
 }
 
-func (m *model) markReloading() {
-	for i := range m.repos {
-		m.loaded[i] = false
-	}
-}
-
 func (m model) allLoaded() bool {
 	for i := range m.repos {
 		if !m.loaded[i] {
@@ -164,8 +158,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, nil
 
 	case tickMsg:
-		m.markReloading()
-		return m, tea.Batch(m.spin.Tick, m.reloadAll(), m.scheduleTick())
+		// Reload in the background; keep the current panes on screen and swap
+		// content in when loadedMsg arrives, so a refresh doesn't flash.
+		return m, tea.Batch(m.reloadAll(), m.scheduleTick())
 
 	case spinner.TickMsg:
 		if m.allLoaded() {
@@ -185,8 +180,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case key.Matches(msg, m.keys.Quit):
 			return m, tea.Quit
 		case key.Matches(msg, m.keys.Refresh):
-			m.markReloading()
-			return m, tea.Batch(m.spin.Tick, m.reloadAll())
+			return m, m.reloadAll()
 		case key.Matches(msg, m.keys.Focus):
 			m.focus = (m.focus + 1) % len(m.repos)
 			return m, nil
